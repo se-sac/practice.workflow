@@ -1,16 +1,27 @@
-name : Remove Topic
+name: Delete Topic
 
 on:
-  push:
-    branches: [main]
+  pull_request:
+    types: [closed]
+    branches:
+      - [main]
 
 jobs:
-  delete-topic:
+  delete-branch:
+    if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     steps:
-    - name: Delete branch
-      run: |
-        echo "Merged: ${{ github.event.pull_request.merged }}"
-        echo "Head ref: ${{ github.event.pull_request.head.ref }}"
-        echo "Repository: ${{ github.repository }}"
-        echo "${{ toJson(github.event) }}"
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Delete topic branch
+        run: |
+          BRANCH_NAME="${{ github.event.pull_request.head.ref }}"
+          REPO="${{ github.repository }}"
+          echo "Deleting branch $BRANCH_NAME from $REPO"
+          gh api \
+            -X DELETE \
+            "repos/${REPO}/git/refs/heads/${BRANCH_NAME}"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
