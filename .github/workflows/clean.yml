@@ -26,6 +26,6 @@ jobs:
       - name: Delete Topic
         uses: dawidd6/action-delete-branch@v3
         with:
-          branch: ${{ github.event.pull_request.head.ref }}
+          branches: ${{ github.event.pull_request.head.ref }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
