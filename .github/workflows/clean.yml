@@ -17,11 +17,12 @@ jobs:
       - name: Delete topic branch
         run: |
           BRANCH_NAME="${{ github.event.pull_request.head.ref }}"
-          REPO="${{ github.repository }}"
-          echo "Deleting branch $BRANCH_NAME from $REPO"
-          gh api \
-            -X DELETE \
-            "repos/${REPO}/git/refs/heads/${BRANCH_NAME}"
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          OWNER_REPO="${{ github.repository }}"
+          API_URL="https://api.github.com/repos/${OWNER_REPO}/git/refs/heads/${BRANCH_NAME}"
+
+          echo "Deleting branch: $BRANCH_NAME"
+          curl -s -X DELETE \
+            -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+            -H "Accept: application/vnd.github+json" \
+            "$API_URL"
 
