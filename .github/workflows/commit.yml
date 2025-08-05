@@ -40,8 +40,8 @@ jobs:
         done <<< "$COMMIT_MESSAGES"
 
         if [ "$VALID" = "false" ]; then
-          echo "No commit messages contain a valid Jira ID."
+          echo "No commit messages contain a valid issue tracker id."
           exit 1
         else
-          echo "At least one commit message contains a Jira ID."
+          echo "At least one commit message contains a issue tracker id."
         fi
