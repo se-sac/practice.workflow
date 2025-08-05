@@ -1,0 +1,20 @@
+name : Hello World
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  HelloWorld:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Sync
+        uses: actions/checkout@v4
+      - name: Build
+        run: |
+          gcc hello.c -o hello.o
+      - name: Test
+        run: |
+          ./hello.o
