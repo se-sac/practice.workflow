@@ -9,17 +9,14 @@ jobs:
   delete-branch:
     if: github.event.pull_request.merged == true && github.event.pull_request.head.repo.full_name == github.repository
     runs-on: ubuntu-latest
-
     steps:
       - name: Sync
         uses: actions/checkout@v4
-
       - name: Set up git credentials
         run: |
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git config --global user.name "github-actions[bot]"
           git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}
-
       - name: Delete Topic
         run: |
           BRANCH_NAME="${{ github.event.pull_request.head.ref }}"
