@@ -29,14 +29,13 @@ jobs:
         echo "$COMMIT_MESSAGES"
         echo "-------------------------"
 
-        VALID=false
+        VALID=true
         while IFS= read -r line; do
           echo "Checking commit: $line"
           #if echo "$line" | grep -Eq '[A-Z]{2,10}-[0-9]+'; then
           #if echo "$line" | grep -Eq 'Issue #[0-9]+'; then
-          if echo "$line" | grep -qE '^Issue #[0-9]+'; then
-            VALID=true
-            break
+          if ! echo "$line" | grep -qE '^Issue #[0-9]+'; then
+            VALID=false
           fi
         done <<< "$COMMIT_MESSAGES"
 
@@ -44,5 +43,5 @@ jobs:
           echo "Some commits do not start with 'Issue #number'. Please fix them!"
           exit 1
         else
-          echo "At least one commit message contains a correct formatted message!"
+          echo "All commit messages contains a correct formatted message!"
         fi
