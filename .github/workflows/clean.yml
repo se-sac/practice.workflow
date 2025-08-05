@@ -3,26 +3,16 @@ name: Delete Topic
 on:
   pull_request:
     types: [closed]
-    branches:
-      - main
+    branches: [main]
 
 jobs:
   delete-branch:
     if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      - name: Sync
         uses: actions/checkout@v4
-
-      - name: Delete topic branch
+      - name: Delete topic
         run: |
-          BRANCH_NAME="${{ github.event.pull_request.head.ref }}"
-          OWNER_REPO="${{ github.repository }}"
-          API_URL="https://api.github.com/repos/${OWNER_REPO}/git/refs/heads/${BRANCH_NAME}"
-
-          echo "Deleting branch: $BRANCH_NAME"
-          curl -s -X DELETE \
-            -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
-            -H "Accept: application/vnd.github+json" \
-            "$API_URL"
+          git push origin --delete ${{ github.event.pull_request.head.ref }}
 
