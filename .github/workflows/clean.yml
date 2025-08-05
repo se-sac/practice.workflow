@@ -1,4 +1,4 @@
-name: Delete Topic
+name: Delete topic
 
 on:
   pull_request:
@@ -7,12 +7,22 @@ on:
 
 jobs:
   delete-branch:
-    if: github.event.pull_request.merged == true
+    if: github.event.pull_request.merged == true && github.event.pull_request.head.repo.full_name == github.repository
     runs-on: ubuntu-latest
+
     steps:
       - name: Sync
         uses: actions/checkout@v4
-      - name: Delete topic
+
+      - name: Set up git credentials
         run: |
-          git push origin --delete ${{ github.event.pull_request.head.ref }}
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git config --global user.name "github-actions[bot]"
+          git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}
+
+      - name: Delete Topic
+        run: |
+          BRANCH_NAME="${{ github.event.pull_request.head.ref }}"
+          echo "Deleting branch: $BRANCH_NAME"
+          git push origin --delete "$BRANCH_NAME"
 
