@@ -41,8 +41,8 @@ jobs:
         done <<< "$COMMIT_MESSAGES"
 
         if [ "$VALID" = "false" ]; then
-          echo "No commit messages contain a valid issue tracker id!"
+          echo "Some commits do not start with 'Issue #number'. Please fix them!"
           exit 1
         else
-          echo "At least one commit message contains a issue tracker id!"
+          echo "At least one commit message contains a correct formatted message!"
         fi
