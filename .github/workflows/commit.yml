@@ -12,13 +12,13 @@ jobs:
     permissions:
       contents: read
       pull-requests: write
-    name: Commit
     steps:
       - uses: actions/checkout@v4
         with:
           ref: ${{ github.event.pull_request.head.sha }}
           fetch-depth: 0
-      - id: check-commit
+      - env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         uses: uptownaravi/verify-commit-message-action@v2
         with:
           regex: '(?i)jira-[0-9]{3,}'
