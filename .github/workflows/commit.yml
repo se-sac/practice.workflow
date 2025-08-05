@@ -33,7 +33,8 @@ jobs:
         while IFS= read -r line; do
           echo "Checking commit: $line"
           #if echo "$line" | grep -Eq '[A-Z]{2,10}-[0-9]+'; then
-          if echo "$line" | grep -Eq 'Issue #[0-9]+'; then
+          #if echo "$line" | grep -Eq 'Issue #[0-9]+'; then
+          if echo "$line" | grep -qE '^Issue #[0-9]+'; then
             VALID=true
             break
           fi
