@@ -32,6 +32,10 @@ jobs:
         VALID=true
         while IFS= read -r line; do
           echo "Checking commit: $line"
+          if echo "$MSG" | grep -qE "^Merge "; then
+            echo "Skipping merge commit"
+            continue
+          fi
           #if echo "$line" | grep -Eq '[A-Z]{2,10}-[0-9]+'; then
           #if echo "$line" | grep -Eq 'Issue #[0-9]+'; then
           if ! echo "$line" | grep -qE '^Issue #[0-9]+'; then
