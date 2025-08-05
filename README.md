@@ -1,1 +1,1 @@
-# GitHub Workflow and Action
+# GitHub Workflow and Actions
