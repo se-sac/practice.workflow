@@ -30,7 +30,8 @@ jobs:
         echo "-------------------------"
 
         VALID=true
-        while IFS= read -r line; do
+        #while IFS= read -r line; do
+        for line in $COMMIT_MESSAGES; do
           echo "Checking commit: $line"
           if echo "$line" | grep -qE "^Merge "; then
             echo "Skipping merge commit"
