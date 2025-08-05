@@ -5,7 +5,7 @@ on:
     types: [opened, synchronize, reopened]
 
 jobs:
-  check-commits-for-jira:
+  check-commits:
     runs-on: ubuntu-latest
 
     steps:
@@ -33,15 +33,16 @@ jobs:
         while IFS= read -r line; do
           echo "Checking commit: $line"
           #if echo "$line" | grep -Eq '[A-Z]{2,10}-[0-9]+'; then
-          if echo "$line" | grep -Eq 'Issue #[0-9]+'; then
+          #if echo "$line" | grep -Eq 'Issue #[0-9]+'; then
+          if echo "$line" | grep -qE '^Issue #[0-9]+'; then
             VALID=true
             break
           fi
         done <<< "$COMMIT_MESSAGES"
 
         if [ "$VALID" = "false" ]; then
-          echo "No commit messages contain a valid issue tracker id!"
+          echo "Some commits do not start with 'Issue #number'. Please fix them!"
           exit 1
         else
-          echo "At least one commit message contains a issue tracker id!"
+          echo "At least one commit message contains a correct formatted message!"
         fi
