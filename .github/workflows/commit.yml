@@ -1,24 +1,46 @@
-name : Check Commit
+name: Check Commit
 
 on:
-  push:
-    branches: [main]
   pull_request:
-    branches: [main]
+    types: [opened, synchronize, reopened]
 
 jobs:
-  commit-message-check-job:
+  check-commits-for-jira:
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      pull-requests: write
+
     steps:
-      - uses: actions/checkout@v4
-        with:
-          ref: ${{ github.event.pull_request.head.sha }}
-          fetch-depth: 0
-      - env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        uses: uptownaravi/verify-commit-message-action@v2
-        with:
-          regex: '(?i)jira-[0-9]{3,}'
+    - name: Checkout
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - name: Get PR commit messages
+      id: get_commit_messages
+      run: |
+        BASE=${{ github.event.pull_request.base.ref }}
+        HEAD=$(git rev-parse HEAD)
+
+        echo "BASE: $BASE"
+        echo "HEAD: $HEAD"
+
+        COMMIT_MESSAGES=$(git log origin/$BASE..$HEAD --pretty=format:"%s")
+
+        echo "---- Commit Messages ----"
+        echo "$COMMIT_MESSAGES"
+        echo "-------------------------"
+
+        VALID=false
+        while IFS= read -r line; do
+          echo "Checking commit: $line"
+          if echo "$line" | grep -Eq '[A-Z]{2,10}-[0-9]+'; then
+            VALID=true
+            break
+          fi
+        done <<< "$COMMIT_MESSAGES"
+
+        if [ "$VALID" = "false" ]; then
+          echo "No commit messages contain a valid Jira ID."
+          exit 1
+        else
+          echo "At least one commit message contains a Jira ID."
+        fi
