@@ -1,1 +1,1 @@
-# cicd-bot
+# GitHub Workflow
