@@ -1,0 +1,34 @@
+name: Check Security
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  analyze:
+    name: CodeQL Analysis
+    runs-on: self-hosted
+
+    strategy:
+      fail-fast: false
+      matrix:
+        #language: ['java', 'javascript', 'python', 'c']
+        language: ["c"]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Init
+        uses: github/codeql-action/init@v3
+        with:
+          languages: ${{ matrix.language }}
+
+      - name: Build
+        run: gcc hello.c -o hello.o
+
+      - name: Security
+        uses: github/codeql-action/analyze@v3
+# https://docs.github.com/ko/code-security/code-scanning/introduction-to-code-scanning/about-code-scanning-with-codeql
