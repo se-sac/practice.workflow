@@ -4,46 +4,48 @@ on:
   pull_request:
     types: [opened, synchronize, reopened]
 
+permissions: read-all
+
 jobs:
   check-commits:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout
-      uses: actions/checkout@v4
-      with:
-        fetch-depth: 0
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
-    - name: Commit
-      id: get_commit_messages
-      run: |
-        BASE=${{ github.event.pull_request.base.ref }}
-        HEAD=$(git rev-parse HEAD)
+      - name: Commit
+        id: get_commit_messages
+        run: |
+          BASE=${{ github.event.pull_request.base.ref }}
+          HEAD=$(git rev-parse HEAD)
 
-        echo "BASE: $BASE"
-        echo "HEAD: $HEAD"
+          echo "BASE: $BASE"
+          echo "HEAD: $HEAD"
 
-        COMMIT_MESSAGES=$(git log origin/$BASE..$HEAD --pretty=format:"%s")
+          COMMIT_MESSAGES=$(git log "origin/$BASE..$HEAD" --pretty=format:"%s")
 
-        echo "---- Commit Messages ----"
-        echo "$COMMIT_MESSAGES"
-        echo "-------------------------"
+          echo "---- Commit Messages ----"
+          echo "$COMMIT_MESSAGES"
+          echo "-------------------------"
 
-        VALID=true
-        while IFS= read -r line; do
-          echo "Checking commit: $line"
-          if echo "$line" | grep -qE "^Merge "; then
-            echo "Skipping merge commit"
-            continue
+          VALID=true
+          while IFS= read -r line; do
+            echo "Checking commit: $line"
+            if echo "$line" | grep -qE "^Merge "; then
+              echo "Skipping merge commit"
+              continue
+            fi
+            if ! echo "$line" | grep -qE '^Issue #[0-9]+'; then
+              VALID=false
+            fi
+          done <<< "$COMMIT_MESSAGES"
+
+          if [ "$VALID" = "false" ]; then
+            echo "Some commits do not start with 'Issue #number'. Please fix them!"
+            exit 1
+          else
+            echo "All commit messages contains a correct formatted message!"
           fi
-          if ! echo "$line" | grep -qE '^Issue #[0-9]+'; then
-            VALID=false
-          fi
-        done <<< "$COMMIT_MESSAGES"
-
-        if [ "$VALID" = "false" ]; then
-          echo "Some commits do not start with 'Issue #number'. Please fix them!"
-          exit 1
-        else
-          echo "All commit messages contains a correct formatted message!"
-        fi

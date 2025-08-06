@@ -1,4 +1,4 @@
-name : Hello World
+name: Hello World
 
 on:
   push:
@@ -6,15 +6,22 @@ on:
   pull_request:
     branches: [main]
 
+permissions: read-all
+
 jobs:
   hello-world:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
       - name: Build
         run: |
           gcc hello.c -o hello.o
+
       - name: Test
         run: |
           ./hello.o
+
+# https://github.com/marketplace/actions/checkout
