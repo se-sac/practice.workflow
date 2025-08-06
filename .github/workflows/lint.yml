@@ -35,5 +35,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           VALIDATE_CHECKOV: false
           VALIDATE_TERRAFORM_CHECKOV: false
+          VALIDATE_ALL_CODEBASE: false
+          DEFAULT_BRANCH: ${{ github.event.pull_request.base.ref }}
 # https://github.com/marketplace/actions/super-linter
 # https://github.com/super-linter/super-linter#supported-linters
