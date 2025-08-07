@@ -1,0 +1,24 @@
+name: Check Actions
+
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/**/*.yml"
+      - ".github/workflows/**/*.yaml"
+
+jobs:
+  actionlint:
+    runs-on: self-hosted
+    steps:
+      - uses: actions/checkout@v4
+
+      #- name: Run actionlint
+      #  uses: raven-actions/actionlint@v2
+      #  with:
+      #     matcher: false
+      #     cache: false
+      #     fail-on-error: true
+
+      - name: Run actionlint
+        run: |
+          docker run --rm -v "$(pwd):$(pwd)" -w "$(pwd)" rhysd/actionlint:latest
